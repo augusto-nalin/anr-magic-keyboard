@@ -1,0 +1,146 @@
+# What each key on the Magic Keyboard does on the PC. Edit, then `make flash`.
+#
+#   trigger = output              one per line, # starts a comment
+#
+# Trigger: Mac modifiers + one key, named by the Mac UK legend
+#   cmd opt ctrl shift            either side; lcmd rcmd lopt ropt lctrl rctrl lshift rshift for one
+#   globe                         Globe/fn held; "globe" on its own is a Globe tap
+#   media                         the F-row is in media mode: the Caps Lock light, flipped by Globe
+#   Held modifiers a trigger doesn't name pass through: with "cmd+c = ctrl+c", Cmd+Shift+C
+#   sends Ctrl+Shift+C. The trigger naming the most modifiers wins (media counts less than
+#   the others), a tie goes to the line further up.
+#
+# Output: PC modifiers + one key, named by the standard UK PC legend
+#   ctrl shift alt win, rctrl rshift ralt rwin, altgr (same as ralt)
+#   a, b                          tap a, then b
+#   altcode 0167                  types a character by its Windows Alt code
+#   brightness_down brightness_up prev play next stop mute vol_down vol_up, consumer 0x221
+#   sleep power wake
+#   toggle_media                  flips the F-row between media and function keys
+#   none                          does nothing
+#   [hold]                        after a single key output: its modifiers stay down for as long
+#                                 as the trigger's modifiers are (Cmd+Tab, Tab, Tab...)
+#
+# Keys: a-z 0-9 f1-f24 enter esc backspace tab space minus equal lbracket rbracket semicolon
+#   quote comma dot slash capslock printscreen scrolllock pause insert home end pageup
+#   pagedown delete left right up down numlock menu kp0-kp9 kp_slash kp_asterisk kp_minus
+#   kp_plus kp_enter kp_dot, or any HID usage as 0x..
+#   On the Mac side also: section (§ ±), grave (` ~), backslash (\ |, by Enter), lock
+#   On the PC side also: grave (` ¬), hash (# ~), backslash (\ |, by left Shift)
+
+[modifiers]                         # what a held modifier is when no rule takes it
+cmd   = win
+opt   = alt
+ctrl  = ctrl
+shift = shift
+
+[keys]
+
+# Special keys
+capslock        = toggle_media
+lock            = win+l
+globe           = win+dot           # emoji panel
+
+# F-row, media mode
+media+f1        = brightness_down
+media+f2        = brightness_up
+media+f3        = win+tab           # Mission Control: Task View
+media+f4        = win+s             # Spotlight: Search
+media+f5        = win+h             # Dictation: Voice typing
+media+f6        = win+n             # Do Not Disturb: Notifications
+media+f7        = prev
+media+f8        = play
+media+f9        = next
+media+f10       = mute
+media+f11       = vol_down
+media+f12       = vol_up
+cmd+f6          = sleep
+
+# Globe layer
+globe+left      = home
+globe+right     = end
+globe+up        = pageup
+globe+down      = pagedown
+globe+backspace = delete
+globe+opt+backspace = ctrl+delete   # delete the next word
+
+# Cmd as Ctrl
+cmd+a           = ctrl+a
+cmd+b           = ctrl+b
+cmd+c           = ctrl+c
+cmd+d           = ctrl+d
+cmd+f           = ctrl+f
+cmd+i           = ctrl+i
+cmd+j           = ctrl+j
+cmd+k           = ctrl+k
+cmd+l           = ctrl+l
+cmd+n           = ctrl+n
+cmd+o           = ctrl+o
+cmd+p           = ctrl+p
+cmd+r           = ctrl+r
+cmd+s           = ctrl+s
+cmd+t           = ctrl+t
+cmd+u           = ctrl+u
+cmd+v           = ctrl+v
+cmd+w           = ctrl+w
+cmd+x           = ctrl+x
+cmd+y           = ctrl+y
+cmd+z           = ctrl+z
+cmd+1           = ctrl+1
+cmd+2           = ctrl+2
+cmd+3           = ctrl+3
+cmd+4           = ctrl+4
+cmd+5           = ctrl+5
+cmd+6           = ctrl+6
+cmd+7           = ctrl+7
+cmd+8           = ctrl+8
+cmd+9           = ctrl+9
+cmd+0           = ctrl+0
+cmd+minus       = ctrl+minus
+cmd+equal       = ctrl+equal
+cmd+slash       = ctrl+slash
+cmd+comma       = ctrl+comma
+cmd+enter       = ctrl+enter
+
+# Cmd text navigation
+cmd+left        = home
+cmd+right       = end
+cmd+up          = ctrl+home
+cmd+down        = ctrl+end
+# Delete to the start of the line. Shells don't select with Shift+Home, so F24 goes first for
+# Windows Terminal to turn into Ctrl+U (sendInput "\u0015"); other apps ignore it.
+cmd+backspace   = f24, shift+home, backspace
+
+# Cmd apps and windows
+cmd+tab         = alt+tab [hold]
+cmd+q           = alt+f4
+cmd+h           = win+down
+cmd+m           = win+down
+cmd+space       = win+s
+cmd+g           = f3
+cmd+lbracket    = alt+left
+cmd+rbracket    = alt+right
+cmd+shift+z     = ctrl+y
+cmd+shift+j     = ctrl+j
+cmd+shift+lbracket = ctrl+shift+tab
+cmd+shift+rbracket = ctrl+tab
+cmd+shift+3     = win+printscreen
+cmd+shift+4     = win+shift+s
+cmd+shift+5     = win+shift+s
+cmd+opt+esc     = ctrl+shift+esc
+cmd+opt+i       = ctrl+shift+i
+
+# Option editing
+opt+left        = ctrl+left
+opt+right       = ctrl+right
+opt+backspace   = ctrl+backspace
+
+# Mac UK legends on the Windows United Kingdom layout
+section         = altcode 0167      # §
+shift+section   = altcode 0177      # ±
+shift+grave     = shift+hash        # ~
+backslash       = backslash
+shift+2         = shift+quote       # @
+shift+quote     = shift+2           # "
+opt+2           = altgr+4           # €
+opt+3           = hash              # #

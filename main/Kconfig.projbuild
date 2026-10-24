@@ -1,0 +1,89 @@
+menu "Magic Keyboard Configuration"
+
+    config MKB_MEDIA_KEYS
+        bool "F1-F12 start as media keys"
+        default "y"
+        help
+            F1-F12 do what keymap.txt's media+ rules say (brightness, Task View, volume...) and
+            Globe+F1-F12 are function keys. When off it's the other way around. Caps Lock
+            (toggle_media in keymap.txt) flips them, and every restart starts from here.
+            Everything else about the keys is in keymap.txt.
+
+    choice MKB_KEYBOARD_POWER
+        prompt "Keyboard power saving (sniff)"
+        default MKB_KEYBOARD_POWER_IDLE
+        help
+            The keyboard asks for sniff mode with a 15ms interval, which saves its battery and
+            makes a key report wait up to 15ms for the next slot. An active link is only faster
+            with a short poll interval (MKB_KEYBOARD_POLL_SLOTS), without one it's polled every
+            25ms and measured twice as slow.
+
+        config MKB_KEYBOARD_POWER_ALWAYS
+            bool "Always, the keyboard decides"
+
+        config MKB_KEYBOARD_POWER_IDLE
+            bool "Only when idle"
+            help
+                The link stays active while typing and sniff is allowed again after
+                MKB_KEYBOARD_IDLE_SECONDS without a key. With a 6-slot poll it measured about
+                5ms faster than leaving it to the keyboard (29 vs 34ms trimmed median, README).
+
+        config MKB_KEYBOARD_POWER_NEVER
+            bool "Never"
+            help
+                Sniff and hold are refused for good, and the keyboard disconnects after a few
+                idle minutes instead, so the next key waits for a reconnect.
+    endchoice
+
+    config MKB_KEYBOARD_SNIFF_SLOTS
+        int "Sniff interval to ask the keyboard for, in 0.625ms slots"
+        depends on MKB_KEYBOARD_POWER_ALWAYS
+        range 0 800
+        default 0
+        help
+            0 leaves the interval to the keyboard, which asks for 24 slots (15ms). Anything else
+            has the bridge renegotiate to that interval once the keyboard has connected (even
+            numbers, 8 is 5ms). The Magic Keyboard doesn't keep it: every request wakes the link
+            and it goes straight back to its own 24 slots, about every 1.5s. Leave at 0.
+
+    config MKB_KEYBOARD_POLL_SLOTS
+        int "Poll interval to ask for while the link is active, in 0.625ms slots"
+        range 0 1000
+        default 6
+        help
+            0 leaves it to the controller, which polls an active link with nothing to send only
+            every 40 slots (25ms), slower than the keyboard's own 15ms sniff. 6 is 3.75ms. Only
+            matters with "only when idle" or "never".
+
+    config MKB_KEYBOARD_IDLE_SECONDS
+        int "Seconds without a key before power saving is allowed again"
+        depends on MKB_KEYBOARD_POWER_IDLE
+        default 20
+
+    config MKB_LATENCY_MARKERS
+        bool "Print latency markers"
+        default "n"
+        help
+            Prints "@K" on the console the moment a report arrives from the keyboard, and logs
+            the Caps Lock round trip (report in, Windows writes the LED state back) on our own
+            clock. Costs a serial write per key, so off outside measurements.
+
+    config MKB_DISABLE_OPTIMIZATIONS
+        bool "Disable optimizations"
+        default "n"
+        help
+            Whether to disable all optimization for project files (useful for debugging)
+
+    config MKB_ADDITIONAL_WARNINGS
+        bool "Enable additional warnings"
+        default "y"
+        help
+            Whether to enable further warnings not present on -Wall
+
+    config MKB_WARNINGS_AS_ERRORS
+        bool "Treat warnings as errors"
+        default "y"
+        help
+            Whether to treat all compiler warnings as errors (-Werror) for project files
+
+endmenu

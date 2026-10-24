@@ -1,0 +1,11 @@
+build/
+managed_components/
+out/
+bin/
+gen/
+.cache/
+.claude/
+CLAUDE.md
+
+sdkconfig
+sdkconfig.old
